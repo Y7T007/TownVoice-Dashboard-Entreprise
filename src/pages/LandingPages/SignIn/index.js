@@ -45,14 +45,33 @@ import routes from "routes";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
-function SignInBasic() {
-  const [rememberMe, setRememberMe] = useState(false);
+import { auth } from "../../../firebase";
 
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
+function SignInBasic() {
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
+    const provider = new GoogleAuthProvider();
+    const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+    const handleSignIn = async (event) => {
+      event.preventDefault();
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        // User signed in successfully.
+        // Redirect to another page or do something else here.
+      } catch (error) {
+        // Handle Errors here.
+        console.error(error);
+      }
+    };
 
   return (
     <>
-      {/*<DefaultNavbar routes={routes} />*/}
+      <DefaultNavbar routes={routes} />
       <MKBox
         position="absolute"
         top={0}
@@ -90,21 +109,50 @@ function SignInBasic() {
                   Sign in
                 </MKTypography>
                 <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
-                  <Grid item xs={2}>
-                    <MKTypography component={MuiLink} href="#" variant="body1" color="white">
-                      <GoogleIcon color="inherit" />
-                    </MKTypography>
-                  </Grid>
-
-                </Grid>
+  <Grid item xs={2}>
+    <MKTypography
+      component={MuiLink}
+      href="#"
+      variant="body1"
+      color="white"
+      onClick={async () => {
+        try {
+          const result = await signInWithPopup(auth, provider);
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          const token = result.credential.accessToken;
+          // The signed-in user info.
+          const user = result.user;
+          // ...
+        } catch (error) {
+          // Handle Errors here.
+          console.error(error);
+        }
+      }}
+    >
+      <GoogleIcon color="inherit" />
+    </MKTypography>
+  </Grid>
+</Grid>
               </MKBox>
               <MKBox pt={4} pb={3} px={3}>
                 <MKBox component="form" role="form">
                   <MKBox mb={2}>
-                    <MKInput type="email" label="Email" fullWidth />
+                    <MKInput
+                        type="email"
+                        label="Email"
+                        fullWidth
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
                   </MKBox>
                   <MKBox mb={2}>
-                    <MKInput type="password" label="Password" fullWidth />
+                    <MKInput
+                        type="password"
+                        label="Password"
+                        fullWidth
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
                   </MKBox>
                   <MKBox display="flex" alignItems="center" ml={-1}>
                     <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -119,7 +167,7 @@ function SignInBasic() {
                     </MKTypography>
                   </MKBox>
                   <MKBox mt={4} mb={1}>
-                    <MKButton variant="gradient" color="info" fullWidth>
+                    <MKButton variant="gradient" color="info" fullWidth type="submit">
                       sign in
                     </MKButton>
                   </MKBox>
