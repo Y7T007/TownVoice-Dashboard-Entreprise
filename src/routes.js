@@ -67,6 +67,7 @@ import Dropdowns from "layouts/sections/elements/dropdowns";
 import ProgressBars from "layouts/sections/elements/progress-bars";
 import Toggles from "layouts/sections/elements/toggles";
 import Typography from "layouts/sections/elements/typography";
+import {Dashboard} from "@mui/icons-material";
 
 const routes = [
   {
@@ -90,8 +91,8 @@ const routes = [
           },
           {
             name: "Dashboard",
-            route: "/pages/landing-pages/author",
-            component: <Author />,
+            route: "/Dashboard",
+            component: <ContactUs />,
           },
         ],
       },

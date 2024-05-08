@@ -14,61 +14,54 @@ Coded by www.creative-tim.com
 */
 
 import { useState } from "react";
-
-// react-router-dom components
 import { Link } from "react-router-dom";
-
-// @mui material components
+import { useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
 import MuiLink from "@mui/material/Link";
-
-// @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import GoogleIcon from "@mui/icons-material/Google";
-
-// Material Kit 2 React components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import MKInput from "components/MKInput";
 import MKButton from "components/MKButton";
-
-// Material Kit 2 React example components
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import SimpleFooter from "examples/Footers/SimpleFooter";
-
-// Material Kit 2 React page layout routes
 import routes from "routes";
-
-// Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
-
 import { auth } from "../../../firebase";
-
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 function SignInBasic() {
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
     const provider = new GoogleAuthProvider();
     const handleSetRememberMe = () => setRememberMe(!rememberMe);
+    const navigate = useNavigate();
 
     const handleSignIn = async (event) => {
-      event.preventDefault();
-      try {
-        await auth.signInWithEmailAndPassword(email, password);
-        // User signed in successfully.
-        // Redirect to another page or do something else here.
-      } catch (error) {
-        // Handle Errors here.
-        console.error(error);
-      }
+        event.preventDefault();
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            navigate("/dashboard");
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
     };
 
+    const handleGoogleSignIn = async () => {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            navigate("/dashboard");
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    };
   return (
     <>
       <DefaultNavbar routes={routes} />
@@ -109,30 +102,18 @@ function SignInBasic() {
                   Sign in
                 </MKTypography>
                 <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
-  <Grid item xs={2}>
-    <MKTypography
-      component={MuiLink}
-      href="#"
-      variant="body1"
-      color="white"
-      onClick={async () => {
-        try {
-          const result = await signInWithPopup(auth, provider);
-          // This gives you a Google Access Token. You can use it to access the Google API.
-          const token = result.credential.accessToken;
-          // The signed-in user info.
-          const user = result.user;
-          // ...
-        } catch (error) {
-          // Handle Errors here.
-          console.error(error);
-        }
-      }}
-    >
-      <GoogleIcon color="inherit" />
-    </MKTypography>
-  </Grid>
-</Grid>
+                    <Grid item xs={2}>
+                        <MKTypography
+                            component={MuiLink}
+                            href="#"
+                            variant="body1"
+                            color="white"
+                            onClick={handleGoogleSignIn}
+                        >
+                            <GoogleIcon color="inherit" />
+                        </MKTypography>
+                    </Grid>
+                </Grid>
               </MKBox>
               <MKBox pt={4} pb={3} px={3}>
                 <MKBox component="form" role="form">
@@ -166,11 +147,11 @@ function SignInBasic() {
                       &nbsp;&nbsp;Remember me
                     </MKTypography>
                   </MKBox>
-                  <MKBox mt={4} mb={1}>
-                    <MKButton variant="gradient" color="info" fullWidth type="submit">
-                      sign in
-                    </MKButton>
-                  </MKBox>
+                    <MKBox mt={4} mb={1}>
+                        <MKButton variant="gradient" color="info" fullWidth type="submit">
+                            sign in
+                        </MKButton>
+                    </MKBox>
                   <MKBox mt={3} mb={1} textAlign="center">
                     <MKTypography variant="button" color="text">
                       Don&apos;t have an account?{" "}
