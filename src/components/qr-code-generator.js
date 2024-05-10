@@ -3,6 +3,9 @@ import axios from 'axios';
 import QRCode from 'qrcode.react';
 import MKInput from "./MKInput";
 import MKButton from "./MKButton";
+import Product from './Product';
+import ExcelAdapter from './ExcelAdapter';
+
 
 function QRCodeForm() {
     const [entityId, setEntityId] = useState('');
@@ -13,6 +16,20 @@ function QRCodeForm() {
     const [submittedData, setSubmittedData] = useState(null);
     const [responseKeys, setResponseKeys] = useState([]);
 
+
+    const [file, setFile] = useState(null);
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        setFile(file);
+
+        if (file) {
+            const adapter = new ExcelAdapter(file);
+            const products = await adapter.getProducts();
+            const elements = products.map(product => product.toString()).join(', ');
+            setElements(elements);
+        }
+    };
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -44,7 +61,6 @@ function QRCodeForm() {
 
             setSubmittedData(data);
             console.log(`${process.env.REACT_APP_CLIENT_URL}/client/RatingPage?data=${encodeURIComponent(JSON.stringify(submittedData))}`);
-
 
         } catch (error) {
             console.error(error);
@@ -80,6 +96,12 @@ function QRCodeForm() {
                         Elements (comma separated):
                     </label><br/>
                     <MKInput type="text" value={elements} onChange={e => setElements(e.target.value)} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 text-left">
+                        Or Upload Excel File:
+                    </label><br/>
+                    <input type="file" onChange={handleFileChange} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 text-left">
