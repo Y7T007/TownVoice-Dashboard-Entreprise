@@ -85,11 +85,6 @@ const routes = [
             component: <AboutUs />,
           },
           {
-            name: "contact us",
-            route: "/pages/landing-pages/contact-us",
-            component: <ContactUs />,
-          },
-          {
             name: "Dashboard",
             route: "/Dashboard",
             component: <ContactUs />,

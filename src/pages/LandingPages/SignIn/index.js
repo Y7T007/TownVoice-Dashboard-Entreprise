@@ -55,7 +55,13 @@ function SignInBasic() {
 
     const handleGoogleSignIn = async () => {
         try {
-            const result = await signInWithPopup(auth, provider);
+            const result = await signInWithPopup(auth, provider) .then((userCredential) => {
+                // Get the JWT and store it in local storage
+                userCredential.user.getIdToken().then((idToken) => {
+                    localStorage.setItem('jwt', idToken);
+                });
+            });
+
             navigate("/dashboard");
         } catch (error) {
             console.error(error);

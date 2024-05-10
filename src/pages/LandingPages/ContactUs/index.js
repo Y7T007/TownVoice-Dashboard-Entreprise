@@ -34,7 +34,22 @@ import footerRoutes from "footer.routes";
 import bgImage from "assets/images/illustrations/illustration-reset.jpg";
 import {QRCodeGenerator} from "../../QRCodeGenerator";
 
+
+
 function ContactUs() {
+
+    const jwt = localStorage.getItem('jwt');
+    console.log(jwt);
+    fetch('https://town-voice-server-b876d978cbe7.herokuapp.com/comments/get-comments-by-entity/ENTITY001', {
+        headers: {
+            Authorization: `Bearer ${jwt}`,
+        },
+    })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch((error) => {
+            console.error('Error:', error);
+        });
   return (
     <>
       <MKBox position="fixed" top="0.5rem" width="100%">
