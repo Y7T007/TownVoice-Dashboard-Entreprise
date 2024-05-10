@@ -33,10 +33,61 @@ import footerRoutes from "footer.routes";
 // Image
 import bgImage from "assets/images/illustrations/illustration-reset.jpg";
 import {QRCodeGenerator} from "../../QRCodeGenerator";
+import {useState} from "react";
+import axios from 'axios';
 
 
+function EntityRatingsAndComments() {
+    const [entityId, setEntityId] = useState('');
+    const [ratings, setRatings] = useState([]);
+    const [comments, setComments] = useState([]);
 
+    const fetchRatingsAndComments = async () => {
+        try {
+            const ratingsResponse = await axios.get(`${process.env.REACT_APP_SERVER_URL}/ratings/get-ratings-by-entity/${entityId}`);
+            const commentsResponse = await axios.get(`${process.env.REACT_APP_SERVER_URL}/comments/get-comments-by-entity/${entityId}`);
+            setRatings(ratingsResponse.data);
+            setComments(commentsResponse.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    return (
+        <div>
+            <input type="text" value={entityId} onChange={e => setEntityId(e.target.value)} placeholder="Enter Entity ID" />
+            <button onClick={fetchRatingsAndComments}>Fetch</button>
+            <div>
+                <h2>Ratings</h2>
+                {ratings.map((rating, index) => (
+                    <div key={index}>
+                        <h3>User ID: {rating.user_id}</h3>
+                        {Object.entries(rating.scores).map(([key, value], i) => (
+                            <p key={i}>{key}: {value}</p>
+                        ))}
+                    </div>
+                ))}
+            </div>
+            <div>
+                <h2>Comments</h2>
+                {comments.map((comment, index) => (
+                    <div key={index}>
+                        <h3>User ID: {comment.user_id}</h3>
+                        <p>{comment.content}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
 function ContactUs() {
+
+    const [showQRCodeGenerator, setShowQRCodeGenerator] = useState(true);
+
+    const toggleComponent = () => {
+        setShowQRCodeGenerator(!showQRCodeGenerator);
+    };
+
 
     const jwt = localStorage.getItem('jwt');
     console.log(jwt);
@@ -109,9 +160,12 @@ function ContactUs() {
                 Contact us
               </MKTypography>
             </MKBox>
-            <MKBox p={3}>
-             <QRCodeGenerator/>
-            </MKBox>
+              <MKBox p={3}>
+                  {showQRCodeGenerator ? <QRCodeGenerator /> : <EntityRatingsAndComments />}
+                  <button onClick={toggleComponent}>
+                      {showQRCodeGenerator ? 'Show Ratings and Comments' : 'Show QR Code Generator'}
+                  </button>
+              </MKBox>
           </MKBox>
         </Grid>
       </Grid>
