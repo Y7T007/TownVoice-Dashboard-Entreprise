@@ -36,6 +36,9 @@ import {QRCodeGenerator} from "../../QRCodeGenerator";
 import {useState} from "react";
 import axios from 'axios';
 import Rating from "@mui/material/Rating";
+import Card from "@mui/material/Card";
+import {CardContent} from "@mui/material";
+import Typography from "@mui/material/Typography";
 
 
 function EntityRatingsAndComments() {
@@ -86,10 +89,16 @@ function EntityRatingsAndComments() {
             <div>
                 <h2>Comments</h2>
                 {comments.map((comment, index) => (
-                    <div key={index}>
-                        <h3>User ID: {comment.user_id}</h3>
-                        <p>{comment.content}</p>
-                    </div>
+                    <Card key={index} sx={{ minWidth: 275, marginBottom: 2 }}>
+                        <CardContent>
+                            <Typography color="text.secondary" gutterBottom>
+                                User ID: {comment.user_id}
+                            </Typography>
+                            <Typography variant="body2">
+                                {comment.content}
+                            </Typography>
+                        </CardContent>
+                    </Card>
                 ))}
             </div>
         </div>
