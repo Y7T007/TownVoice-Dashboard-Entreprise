@@ -35,6 +35,7 @@ import bgImage from "assets/images/illustrations/illustration-reset.jpg";
 import {QRCodeGenerator} from "../../QRCodeGenerator";
 import {useState} from "react";
 import axios from 'axios';
+import Rating from "@mui/material/Rating";
 
 
 function EntityRatingsAndComments() {
@@ -61,9 +62,12 @@ function EntityRatingsAndComments() {
                 <h2>Ratings</h2>
                 {ratings.map((rating, index) => (
                     <div key={index}>
-                        <h3>User ID: {rating.user_id}</h3>
+                        <h3>Transaction ID: {rating.user_id}</h3>
                         {Object.entries(rating.scores).map(([key, value], i) => (
+                            <>
                             <p key={i}>{key}: {value}</p>
+                            <Rating name="disabled" value={value} disabled />
+                            </>
                         ))}
                     </div>
                 ))}
