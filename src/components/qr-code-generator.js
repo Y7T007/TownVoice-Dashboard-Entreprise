@@ -25,8 +25,8 @@ function QRCodeForm() {
 
         if (file) {
             const adapter = new ExcelAdapter(file);
-            const products = await adapter.getProducts();
-            const elements = products.map(product => product.toString()).join(', ');
+            const productNames = await adapter.getProducts();
+            const elements = productNames.join(', ');
             setElements(elements);
         }
     };

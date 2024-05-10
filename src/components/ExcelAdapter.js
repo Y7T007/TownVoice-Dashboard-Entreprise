@@ -14,7 +14,7 @@ export default class ExcelAdapter {
                 const workbook = XLSX.read(data, { type: 'array' });
                 const sheetNameList = workbook.SheetNames;
                 const productList = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNameList[0]]).map(product => {
-                    return new Product(product.ProductID, product.ProductName, product.ProductPrice, product.Quantity);
+                    return product.ProductName; // Only return the product name
                 });
                 resolve(productList);
             };
