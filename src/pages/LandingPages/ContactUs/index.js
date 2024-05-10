@@ -33,7 +33,7 @@ import footerRoutes from "footer.routes";
 // Image
 import bgImage from "assets/images/illustrations/illustration-reset.jpg";
 import {QRCodeGenerator} from "../../QRCodeGenerator";
-import {useState} from "react";
+import React, {useState} from "react";
 import axios from 'axios';
 import Rating from "@mui/material/Rating";
 import Card from "@mui/material/Card";
@@ -75,8 +75,10 @@ function EntityRatingsAndComments() {
 
     return (
         <div>
-            <input type="text" value={entityId} onChange={e => setEntityId(e.target.value)} placeholder="Enter Entity ID" />
-            <button onClick={fetchRatingsAndComments}>Fetch</button>
+            <MKInput type="text" value={entityId} onChange={e => setEntityId(e.target.value)} placeholder="Enter Entity ID"  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <MKButton color="secondary" className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" onClick={fetchRatingsAndComments}>
+                Fetch
+            </MKButton>
             <div>
                 <h2>Average Ratings</h2>
                 {Object.entries(averageScores).map(([key, value], i) => (
@@ -130,12 +132,7 @@ function ContactUs() {
       <MKBox position="fixed" top="0.5rem" width="100%">
         <DefaultNavbar
           routes={routes}
-          action={{
-            type: "external",
-            route: "https://www.creative-tim.com/product/material-kit-react",
-            label: "free download",
-            color: "info",
-          }}
+
         />
       </MKBox>
       <Grid container spacing={3} alignItems="center">
@@ -181,14 +178,15 @@ function ContactUs() {
               mt={-3}
             >
               <MKTypography variant="h3" color="white">
-                Contact us
+                Espace Admin
               </MKTypography>
             </MKBox>
               <MKBox p={3}>
                   {showQRCodeGenerator ? <QRCodeGenerator /> : <EntityRatingsAndComments />}
-                  <button onClick={toggleComponent}>
+                  <br/><br/><br/>
+                  <MKButton color="primary" onClick={toggleComponent}  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" >
                       {showQRCodeGenerator ? 'Show Ratings and Comments' : 'Show QR Code Generator'}
-                  </button>
+                  </MKButton>
               </MKBox>
           </MKBox>
         </Grid>

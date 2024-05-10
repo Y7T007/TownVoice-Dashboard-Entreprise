@@ -138,7 +138,12 @@ function QRCodeForm() {
             <div className="container mx-auto px-4">
                 <h2 className="font-bold text-lg text-center">QR Code</h2>
                 <div className="flex justify-center items-center border-2 border-gray-300 p-4 rounded-md bg-white">
-                    <QRCode value={`${process.env.REACT_APP_CLIENT_URL}/client/RatingPage?data=${encodeURIComponent(JSON.stringify(submittedData))}`} />
+                    <div style={{ width: '100%' }}>
+                        <QRCode
+                            value={`${process.env.REACT_APP_CLIENT_URL}/client/RatingPage?data=${encodeURIComponent(JSON.stringify(submittedData))}`}
+                            size={window.innerWidth/5}
+                        />
+                    </div>
                 </div>
             </div>
         )}
