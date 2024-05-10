@@ -54,21 +54,32 @@ function EntityRatingsAndComments() {
         }
     };
 
+    // Calculate average scores
+    const averageScores = ratings.reduce((acc, rating) => {
+        Object.entries(rating.scores).forEach(([key, value]) => {
+            if (!acc[key]) {
+                acc[key] = { sum: 0, count: 0 };
+            }
+            acc[key].sum += value;
+            acc[key].count += 1;
+        });
+        return acc;
+    }, {});
+
+    Object.keys(averageScores).forEach(key => {
+        averageScores[key] = averageScores[key].sum / averageScores[key].count;
+    });
+
     return (
         <div>
             <input type="text" value={entityId} onChange={e => setEntityId(e.target.value)} placeholder="Enter Entity ID" />
             <button onClick={fetchRatingsAndComments}>Fetch</button>
             <div>
-                <h2>Ratings</h2>
-                {ratings.map((rating, index) => (
-                    <div key={index}>
-                        <h3>Transaction ID: {rating.user_id}</h3>
-                        {Object.entries(rating.scores).map(([key, value], i) => (
-                            <>
-                            <p key={i}>{key}: {value}</p>
-                            <Rating name="disabled" value={value} disabled />
-                            </>
-                        ))}
+                <h2>Average Ratings</h2>
+                {Object.entries(averageScores).map(([key, value], i) => (
+                    <div key={i}>
+                        <p>{key}: {value.toFixed(2)}</p>
+                        <Rating name="disabled" value={value} disabled />
                     </div>
                 ))}
             </div>
