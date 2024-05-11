@@ -34,6 +34,15 @@ import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import { auth } from "../../../firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { updateProfile } from "firebase/auth";
+import entities_scores from './entities_scores.json';
+import Container from "@mui/material/Container";
+import Modal from "@mui/material/Modal";
+import Slide from "@mui/material/Slide";
+import CloseIcon from "@mui/icons-material/Close";
+import Divider from "@mui/material/Divider";
+import { Select } from '@mui/base/Select';
+import { Option } from '@mui/base/Option';
+import MenuItem from "@mui/material/MenuItem";
 
 
 function SignInBasic() {
@@ -43,8 +52,9 @@ function SignInBasic() {
     const provider = new GoogleAuthProvider();
     const handleSetRememberMe = () => setRememberMe(!rememberMe);
     const navigate = useNavigate();
-    const [showModal, setShowModal] = useState(false);
+    const [showModal, setShowModal] = useState(true);
     const [entityId, setEntityId] = useState("");
+    const [entityType, setEntityType] = useState("");
 
     const handleSignIn = async (event) => {
         event.preventDefault();
@@ -70,6 +80,7 @@ function SignInBasic() {
                 if (!userCredential.user.ENTITYID) {
                     // Show the modal to ask for ENTITYID
                     setShowModal(true);
+                    setShow(!show);
                 }else{
                     navigate("/dashboard");
 
@@ -100,6 +111,8 @@ function SignInBasic() {
             alert(error.message);
         }
     };
+    const [show, setShow] = useState(false);
+    const toggleModal = () => setShow(!show);
 
   return (
     <>
@@ -175,12 +188,50 @@ function SignInBasic() {
                     />
                   </MKBox>
                     {showModal && (
-                        <div>
+                        <MKBox component="section" py={6}>
+                            <Container>
+                                <Grid container item xs={12} lg={10} justifyContent="center" mx="auto">
+                                    <MKButton variant="gradient" color="info" onClick={toggleModal}>
+                                        Veuillez renseigner l'ID de votre entreprise
+                                    </MKButton>
+                                </Grid>
+                                <Modal open={show} onClose={toggleModal} sx={{ display: "grid", placeItems: "center" }}>
+                                    <Slide direction="down" in={show} timeout={500}>
+                                        <MKBox
+                                            position="relative"
+                                            width="500px"
+                                            display="flex"
+                                            flexDirection="column"
+                                            borderRadius="xl"
+                                            bgColor="white"
+                                            shadow="xl"
+                                        >
+                                            <MKBox display="flex" alginItems="center" justifyContent="space-between" p={2}>
+                                                <MKTypography variant="h5">Your modal title</MKTypography>
+                                                <CloseIcon fontSize="medium" sx={{ cursor: "pointer" }} onClick={toggleModal} />
+                                            </MKBox>
+                                            <Divider sx={{ my: 0 }} />
+                                            <MKBox p={2}>
 
-                            <label>Enter your ENTITYID:</label>
-                            <input type="text" value={entityId} onChange={(e) => setEntityId(e.target.value)} />
-                            <button onClick={handleEntityIdSubmit}>Submit</button>
-                        </div>
+                                                <div>
+                                                    <label>Enter your ENTITYID:</label>
+                                                    <MKInput fullWidth type="text" value={entityId} onChange={(e) => setEntityId(e.target.value)} />
+                                                    <label>Select your EntityType:</label><br/>
+                                                    <select style={{padding:"15px", width:"100%",borderRadius:"7px"}} value={entityType} onChange={(e) => setEntityType(e.target.value)}>
+                                                        {Object.keys(entities_scores).map((key) => (
+                                                            <option  value={key}>{key}</option >
+                                                        ))}
+                                                    </select><br/><br/>
+                                                    <MKButton variant="gradient" color="primary" onClick={handleEntityIdSubmit}>Sauvegarder</MKButton>
+                                                </div>
+                                            </MKBox>
+                                            <Divider sx={{ my: 0 }} />
+
+                                        </MKBox>
+                                    </Slide>
+                                </Modal>
+                            </Container>
+                        </MKBox>
                     )}
                   <MKBox display="flex" alignItems="center" ml={-1}>
                     <Switch checked={rememberMe} onChange={handleSetRememberMe} />
