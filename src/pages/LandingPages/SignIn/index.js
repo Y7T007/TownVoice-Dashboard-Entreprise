@@ -176,6 +176,7 @@ function SignInBasic() {
                   </MKBox>
                     {showModal && (
                         <div>
+
                             <label>Enter your ENTITYID:</label>
                             <input type="text" value={entityId} onChange={(e) => setEntityId(e.target.value)} />
                             <button onClick={handleEntityIdSubmit}>Submit</button>

@@ -7,7 +7,7 @@ import Product from './Product';
 import ExcelAdapter from './ExcelAdapter';
 
 
-function QRCodeForm() {
+function QRCodeForm({EntityID}) {
     const [entityId, setEntityId] = useState('');
     const [transactionId, setTransactionId] = useState('');
     const [entityType, setEntityType] = useState('');
@@ -77,7 +77,7 @@ function QRCodeForm() {
                     <label className="block text-sm font-medium text-gray-700 text-left">
                         Entity ID:
                     </label><br/>
-                    <MKInput type="text" value={entityId} onChange={e => setEntityId(e.target.value)} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                    <MKInput type="text" value={EntityID} disabled onChange={e => setEntityId(e.target.value)} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 text-left">

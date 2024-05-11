@@ -33,12 +33,14 @@ import footerRoutes from "footer.routes";
 // Image
 import bgImage from "assets/images/illustrations/illustration-reset.jpg";
 import {QRCodeGenerator} from "../../QRCodeGenerator";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from 'axios';
 import Rating from "@mui/material/Rating";
 import Card from "@mui/material/Card";
 import {CardContent} from "@mui/material";
 import Typography from "@mui/material/Typography";
+import { onAuthStateChanged } from "firebase/auth";
+import {auth} from "../../../firebase";
 
 
 function EntityRatingsAndComments() {
@@ -114,6 +116,24 @@ function ContactUs() {
         setShowQRCodeGenerator(!showQRCodeGenerator);
     };
 
+    const [entityId, setEntityId] = useState("");
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Replace 'displayName' with the actual field name for ENTITYID
+                const entityId = user.displayName;
+                setEntityId(entityId);
+            } else {
+                // User is signed out
+                setEntityId("");
+            }
+        });
+
+        // Cleanup subscription on unmount
+        return () => unsubscribe();
+    }, []);
+
 
     const jwt = localStorage.getItem('jwt');
     console.log(jwt);
@@ -178,11 +198,12 @@ function ContactUs() {
               mt={-3}
             >
               <MKTypography variant="h3" color="white">
-                Espace Admin
+                Espace Admin            <strong>  {entityId && <p> {entityId}</p>} </strong>
+
               </MKTypography>
             </MKBox>
               <MKBox p={3}>
-                  {showQRCodeGenerator ? <QRCodeGenerator /> : <EntityRatingsAndComments />}
+                  {showQRCodeGenerator ? <QRCodeGenerator EntityID={entityId} /> : <EntityRatingsAndComments />}
                   <br/><br/><br/>
                   <MKButton color="primary" onClick={toggleComponent}  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" >
                       {showQRCodeGenerator ? 'Show Ratings and Comments' : 'Show QR Code Generator'}
