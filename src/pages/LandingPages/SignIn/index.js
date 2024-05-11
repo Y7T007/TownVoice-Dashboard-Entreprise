@@ -33,6 +33,8 @@ import routes from "routes";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import { auth } from "../../../firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
+
 
 function SignInBasic() {
     const [email, setEmail] = useState("");
@@ -41,6 +43,8 @@ function SignInBasic() {
     const provider = new GoogleAuthProvider();
     const handleSetRememberMe = () => setRememberMe(!rememberMe);
     const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
+    const [entityId, setEntityId] = useState("");
 
     const handleSignIn = async (event) => {
         event.preventDefault();
@@ -55,19 +59,48 @@ function SignInBasic() {
 
     const handleGoogleSignIn = async () => {
         try {
-            const result = await signInWithPopup(auth, provider) .then((userCredential) => {
+
+            const result = await signInWithPopup(auth, provider).then((userCredential) => {
                 // Get the JWT and store it in local storage
                 userCredential.user.getIdToken().then((idToken) => {
                     localStorage.setItem('jwt', idToken);
                 });
-            });
 
-            navigate("/dashboard");
+                // Check if the ENTITYID is already set in the user's profile
+                if (!userCredential.user.ENTITYID) {
+                    // Show the modal to ask for ENTITYID
+                    setShowModal(true);
+                }else{
+                    navigate("/dashboard");
+
+                }
+            });
         } catch (error) {
             console.error(error);
             alert(error.message);
         }
     };
+    const handleEntityIdSubmit = async () => {
+        try {
+            const user = auth.currentUser;
+            if (user) {
+                // Update the user's profile with the entityId
+                await updateProfile(user, {
+                    displayName: entityId, // Replace 'displayName' with the actual field name for ENTITYID
+                });
+
+                // Close the modal
+                setShowModal(false);
+
+                // Navigate to the dashboard
+                navigate("/dashboard");
+            }
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    };
+
   return (
     <>
       <DefaultNavbar routes={routes} />
@@ -141,6 +174,13 @@ function SignInBasic() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                   </MKBox>
+                    {showModal && (
+                        <div>
+                            <label>Enter your ENTITYID:</label>
+                            <input type="text" value={entityId} onChange={(e) => setEntityId(e.target.value)} />
+                            <button onClick={handleEntityIdSubmit}>Submit</button>
+                        </div>
+                    )}
                   <MKBox display="flex" alignItems="center" ml={-1}>
                     <Switch checked={rememberMe} onChange={handleSetRememberMe} />
                     <MKTypography
