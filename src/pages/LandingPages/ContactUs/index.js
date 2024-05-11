@@ -41,23 +41,43 @@ import {CardContent} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { onAuthStateChanged } from "firebase/auth";
 import {auth} from "../../../firebase";
+import { getAuth, getIdToken } from "firebase/auth";
+import {useParams} from "react-router";
 
 
-function EntityRatingsAndComments() {
-    const [entityId, setEntityId] = useState('');
+
+function EntityRatingsAndComments({EntityID}) {
     const [ratings, setRatings] = useState([]);
     const [comments, setComments] = useState([]);
 
     const fetchRatingsAndComments = async () => {
         try {
-            const ratingsResponse = await axios.get(`${process.env.REACT_APP_SERVER_URL}/ratings/get-ratings-by-entity/${entityId}`);
-            const commentsResponse = await axios.get(`${process.env.REACT_APP_SERVER_URL}/comments/get-comments-by-entity/${entityId}`);
+            const auth = getAuth();
+            const token = await getIdToken(auth.currentUser);
+
+            const ratingsResponse = await axios.get(`${process.env.REACT_APP_SERVER_URL}/ratings/get-ratings-by-entity/${EntityID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const commentsResponse = await axios.get(`${process.env.REACT_APP_SERVER_URL}/comments/get-comments-by-entity/${EntityID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
             setRatings(ratingsResponse.data);
             setComments(commentsResponse.data);
         } catch (error) {
             console.error(error);
         }
     };
+
+    useEffect(() => {
+        fetchRatingsAndComments(); // Fetch data when the component mounts
+    }, [EntityID]); // Re-run the effect when entityId changes
+
+
 
     // Calculate average scores
     const averageScores = ratings.reduce((acc, rating) => {
@@ -77,15 +97,15 @@ function EntityRatingsAndComments() {
 
     return (
         <div>
-            <MKInput type="text" value={entityId} onChange={e => setEntityId(e.target.value)} placeholder="Enter Entity ID"  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            {/*<MKInput type="text" value={EntityID} disabled onChange={e => setEntityId(e.target.value)} placeholder="Enter Entity ID"  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />*/}
             <MKButton color="secondary" className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" onClick={fetchRatingsAndComments}>
-                Fetch
+                Actualiser
             </MKButton>
             <div>
                 <h2>Average Ratings</h2>
                 {Object.entries(averageScores).map(([key, value], i) => (
                     <div key={i}>
-                        <p>{key}: {value.toFixed(2)}</p>
+                        <p>{key.toUpperCase()}: {value.toFixed(2)} /5</p>
                         <Rating name="disabled" value={value} disabled />
                     </div>
                 ))}
@@ -96,7 +116,7 @@ function EntityRatingsAndComments() {
                     <Card key={index} sx={{ minWidth: 275, marginBottom: 2 }}>
                         <CardContent>
                             <Typography color="text.secondary" gutterBottom>
-                                User ID: {comment.user_id}
+                                Transaction ID: {comment.user_id}
                             </Typography>
                             <Typography variant="body2">
                                 {comment.content}
@@ -207,7 +227,7 @@ function ContactUs() {
               </MKTypography>
             </MKBox>
               <MKBox p={3}>
-                  {showQRCodeGenerator ? <QRCodeGenerator EntityID={entityId} EntityType={entityType} /> : <EntityRatingsAndComments />}
+                  {showQRCodeGenerator ? <QRCodeGenerator EntityID={entityId} EntityType={entityType} /> : <EntityRatingsAndComments EntityID={entityId} />}
                   <br/><br/><br/>
                   <MKButton color="primary" onClick={toggleComponent}  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" >
                       {showQRCodeGenerator ? 'Show Ratings and Comments' : 'Show QR Code Generator'}
