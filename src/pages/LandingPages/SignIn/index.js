@@ -52,7 +52,7 @@ function SignInBasic() {
     const provider = new GoogleAuthProvider();
     const handleSetRememberMe = () => setRememberMe(!rememberMe);
     const navigate = useNavigate();
-    const [showModal, setShowModal] = useState(true);
+    const [showModal, setShowModal] = useState(false);
     const [entityId, setEntityId] = useState("");
     const [entityType, setEntityType] = useState("");
 
@@ -98,6 +98,7 @@ function SignInBasic() {
                 // Update the user's profile with the entityId
                 await updateProfile(user, {
                     displayName: entityId, // Replace 'displayName' with the actual field name for ENTITYID
+                    photoURL: entityType, // Replace 'photoURL' with the actual field name for entityType
                 });
 
                 // Close the modal

@@ -7,7 +7,7 @@ import Product from './Product';
 import ExcelAdapter from './ExcelAdapter';
 
 
-function QRCodeForm({EntityID}) {
+function QRCodeForm({EntityID,EntityType}) {
     const [entityId, setEntityId] = useState('');
     const [transactionId, setTransactionId] = useState('');
     const [entityType, setEntityType] = useState('');
@@ -36,9 +36,9 @@ function QRCodeForm({EntityID}) {
         const elementsArray = elements.split(',').map(item => item.trim());
 
         let data = {
-            "entity_id": entityId,
+            "entity_id": EntityID,
             "transaction_id": transactionId,
-            "entity_type": entityType,
+            "entity_type": EntityType,
             "elements": elementsArray,
             "amount": parseFloat(amount),
             "DateTime": new Date().toISOString()
@@ -81,16 +81,17 @@ function QRCodeForm({EntityID}) {
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 text-left">
+                        Entity Type:
+                    </label><br/>
+                    <MKInput type="text" value={EntityType} disabled onChange={e => setEntityType(e.target.value)} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 text-left">
                         Transaction ID:
                     </label><br/>
                     <MKInput type="text" value={transactionId} onChange={e => setTransactionId(e.target.value)} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 text-left">
-                        Entity Type:
-                    </label><br/>
-                    <MKInput type="text" value={entityType} onChange={e => setEntityType(e.target.value)} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                </div>
+
                 <div>
                     <label className="block text-sm font-medium text-gray-700 text-left">
                         Elements (comma separated):

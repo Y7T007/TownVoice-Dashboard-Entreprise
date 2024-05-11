@@ -117,16 +117,20 @@ function ContactUs() {
     };
 
     const [entityId, setEntityId] = useState("");
+    const [entityType, setEntityType] = useState(""); // Add a state variable for entity type
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Replace 'displayName' with the actual field name for ENTITYID
+                // Replace 'displayName' and 'entityType' with the actual field names
                 const entityId = user.displayName;
+                const entityType = user.photoURL;
                 setEntityId(entityId);
+                setEntityType(entityType); // Set entity type
             } else {
                 // User is signed out
                 setEntityId("");
+                setEntityType(""); // Reset entity type
             }
         });
 
@@ -203,7 +207,7 @@ function ContactUs() {
               </MKTypography>
             </MKBox>
               <MKBox p={3}>
-                  {showQRCodeGenerator ? <QRCodeGenerator EntityID={entityId} /> : <EntityRatingsAndComments />}
+                  {showQRCodeGenerator ? <QRCodeGenerator EntityID={entityId} EntityType={entityType} /> : <EntityRatingsAndComments />}
                   <br/><br/><br/>
                   <MKButton color="primary" onClick={toggleComponent}  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" >
                       {showQRCodeGenerator ? 'Show Ratings and Comments' : 'Show QR Code Generator'}
